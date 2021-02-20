@@ -11,7 +11,7 @@ driver.get("https://minesweeperonline.com/#beginner")
 # enables mouse left-click
 actionChains = ActionChains(driver)
 
-# creates list of box variables
+# creates list of box variables for a 9x9 minesweeper grid
 list_of_box_variables = []
 for i in range(1, 10):
     for j in range(1, 10):
@@ -35,7 +35,7 @@ face = driver.find_element_by_id("face")
 val_face = face.get_attribute("class")
 counter = 0
 
-games_to_play = 1000
+games_to_play = 1000000
 
 for i in range(1, games_to_play + 1):
     # begins guess algorithm
@@ -56,6 +56,9 @@ for i in range(1, games_to_play + 1):
     # check face value
     face = driver.find_element_by_id("face")
     val_face = face.get_attribute("class")
+
+    if val_face == "facewin":
+        input("YOU HAVE WON!")
 
     if val_face == "facedead":
         # restart game if face == dead
@@ -99,7 +102,7 @@ for i in range(1, games_to_play + 1):
                     top_left_box_status = top_left_box_value.get_attribute("class")
                     surrounding_box_status_dict[top_left_box_key] = top_left_box_status
                 except:
-                    continue
+                    top_left_box_status = "no box"
 
                 # obtain top box key and status
                 top_box_status = ""
@@ -109,7 +112,7 @@ for i in range(1, games_to_play + 1):
                     top_box_status = top_box_value.get_attribute("class")
                     surrounding_box_status_dict[top_box_key] = top_box_status
                 except:
-                    continue
+                    top_box_status = "no box"
 
                 # obtain top-right box key and status
                 top_right_box_status = ""
@@ -119,7 +122,7 @@ for i in range(1, games_to_play + 1):
                     top_right_box_status = top_right_box_value.get_attribute("class")
                     surrounding_box_status_dict[top_right_box_key] = top_right_box_status
                 except:
-                    continue
+                    top_right_box_status = "no box"
 
                 # obtain left box key and status
                 left_box_status = ""
@@ -129,7 +132,7 @@ for i in range(1, games_to_play + 1):
                     left_box_status = left_box_value.get_attribute("class")
                     surrounding_box_status_dict[left_box_key] = left_box_status
                 except:
-                    continue
+                    left_box_status = "no box"
 
                 # obtain right box key and status
                 right_box_status = ""
@@ -139,7 +142,7 @@ for i in range(1, games_to_play + 1):
                     right_box_status = right_box_value.get_attribute("class")
                     surrounding_box_status_dict[right_box_key] = right_box_status
                 except:
-                    continue
+                    right_box_status = "no box"
 
                 # obtain bottom-left box key and status
                 bottom_left_box_status = ""
@@ -149,7 +152,7 @@ for i in range(1, games_to_play + 1):
                     bottom_left_box_status = bottom_left_box_value.get_attribute("class")
                     surrounding_box_status_dict[bottom_left_box_key] = bottom_left_box_status
                 except:
-                    continue
+                    bottom_left_box_status = "no box"
 
                 # obtain bottom box key and status
                 bottom_box_status = ""
@@ -159,7 +162,7 @@ for i in range(1, games_to_play + 1):
                     bottom_box_status = bottom_box_value.get_attribute("class")
                     surrounding_box_status_dict[bottom_box_key] = bottom_box_status
                 except:
-                    continue
+                    bottom_box_status = "no box"
 
                 # obtain bottom-right box key and status
                 bottom_right_box_status = ""
@@ -169,7 +172,7 @@ for i in range(1, games_to_play + 1):
                     bottom_right_box_status = bottom_right_box_value.get_attribute("class")
                     surrounding_box_status_dict[bottom_right_box_key] = bottom_right_box_status
                 except:
-                    continue
+                    bottom_right_box_status = "no box"
 
                 print(surrounding_box_status_dict)
 
