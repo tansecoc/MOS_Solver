@@ -48,37 +48,36 @@ for i in range(1, games_to_play + 1):
     counter += 1
 
     # First Four Moves: click 4 corners, obtain box statuses, delete boxes from safe dictionary
-    try:
-        current_box_key = "x_1_1" # sets current box key to top-left corner
-        dict_of_boxes[current_box_key][1].click()  # clicks corner
-        current_box_element = dict_of_boxes[current_box_key][1] # sets current box element to corner
-        current_box_status = current_box_element.get_attribute("class") # obtains box status
-        dict_of_boxes[current_box_key][0] = current_box_status # updates box status in box dictionary
-        del safe_dict_of_boxes[current_box_key ]# deletes safe box key from safe dictionary
+    # try:
+    current_box_key = "x_1_1" # sets current box key to top-left corner
+    dict_of_boxes[current_box_key][1].click()  # clicks corner
+    current_box_element = dict_of_boxes[current_box_key][1] # sets current box element to corner
+    current_box_status = current_box_element.get_attribute("class") # obtains box status
+    dict_of_boxes[current_box_key][0] = current_box_status # updates box status in box dictionary
+    del safe_dict_of_boxes[current_box_key ]# deletes safe box key from safe dictionary
 
-        current_box_key = "x_1_9" # sets current box key to top-right corner
-        dict_of_boxes[current_box_key][1].click()  # clicks corner
-        current_box_element = dict_of_boxes[current_box_key][1] # sets current box element to corner
-        current_box_status = current_box_element.get_attribute("class") # obtains box status
-        dict_of_boxes[current_box_key][0] = current_box_status # updates box status in box dictionary
-        del safe_dict_of_boxes[current_box_key ]# deletes safe box key from safe dictionary
+    current_box_key = "x_1_9" # sets current box key to top-right corner
+    dict_of_boxes[current_box_key][1].click()  # clicks corner
+    current_box_element = dict_of_boxes[current_box_key][1] # sets current box element to corner
+    current_box_status = current_box_element.get_attribute("class") # obtains box status
+    dict_of_boxes[current_box_key][0] = current_box_status # updates box status in box dictionary
+    del safe_dict_of_boxes[current_box_key ]# deletes safe box key from safe dictionary
 
-        current_box_key = "x_9_1" # sets current box key to bottom-left corner
-        dict_of_boxes[current_box_key][1].click()  # clicks corner
-        current_box_element = dict_of_boxes[current_box_key][1] # sets current box element to corner
-        current_box_status = current_box_element.get_attribute("class") # obtains box status
-        dict_of_boxes[current_box_key][0] = current_box_status # updates box status in box dictionary
-        del safe_dict_of_boxes[current_box_key ]# deletes safe box key from safe dictionary
+    current_box_key = "x_9_1" # sets current box key to bottom-left corner
+    dict_of_boxes[current_box_key][1].click()  # clicks corner
+    current_box_element = dict_of_boxes[current_box_key][1] # sets current box element to corner
+    current_box_status = current_box_element.get_attribute("class") # obtains box status
+    dict_of_boxes[current_box_key][0] = current_box_status # updates box status in box dictionary
+    del safe_dict_of_boxes[current_box_key ]# deletes safe box key from safe dictionary
 
-        current_box_key = "x_9_9" # sets current box key to bottom-right corner
-        dict_of_boxes[current_box_key][1].click()  # clicks corner
-        current_box_element = dict_of_boxes[current_box_key][1] # sets current box element to corner
-        current_box_status = current_box_element.get_attribute("class") # obtains box status
-        dict_of_boxes[current_box_key][0] = current_box_status # updates box status in box dictionary
-        del safe_dict_of_boxes[current_box_key ]# deletes safe box key from safe dictionary
-
-    except:
-        continue
+    current_box_key = "x_9_9" # sets current box key to bottom-right corner
+    dict_of_boxes[current_box_key][1].click()  # clicks corner
+    current_box_element = dict_of_boxes[current_box_key][1] # sets current box element to corner
+    current_box_status = current_box_element.get_attribute("class") # obtains box status
+    dict_of_boxes[current_box_key][0] = current_box_status # updates box status in box dictionary
+    del safe_dict_of_boxes[current_box_key ]# deletes safe box key from safe dictionary
+    # except:
+    #     continue
 
     # check face value
     face_element = driver.find_element_by_id("face")
@@ -109,25 +108,47 @@ for i in range(1, games_to_play + 1):
             del safe_dict_of_boxes[current_box_key]  # deletes safe box key from safe dictionary
             print("Clicked box:", current_box_key, ". Status:", current_box_status)
 
+            # check status of boxes that surround current box and implement All-Free-Neighbors (AFN) logic
+
+            # parse current box into a list to obtain starting point for surrounding boxes
+            current_box_parse = list(current_box_key)
+            print("Current box parse:", current_box_parse)
+
+            # *** BEGIN OBTAINING SURROUNDING BOX STATUSES ***
+
+            # obtain top-left box key and status, deletes from safe dictionary if "square open" == 0
+            surround_TL_box_key = "No box"
+            surround_TL_box_status = "null"
+            surround_TL_box_element = ""
+            try:
+                # get box coorindates
+                surround_TL_box_key = "x_" + str(int(current_box_parse[2]) - 1) + "_" \
+                                      + str(int(current_box_parse[4]) - 1)
+                # get box status
+                surround_TL_box_element = dict_of_boxes[surround_TL_box_key][1] # get box web element
+                surround_TL_box_status = surround_TL_box_element.get_attribute("class") # obtain box status
+                dict_of_boxes[surround_TL_box_key][0] = surround_TL_box_status  # updates box status in box dictionary
+
+                if surround_TL_box_status == "square open0":
+                    del safe_dict_of_boxes[surround_TL_box_key]  # deletes safe box key from safe dictionary
+            except:
+                continue
+
+            # # ***THIS CODE IS FOR TESTING***
+            # print("TL box key:", surround_TL_box_key)
+            # print("TL box element:", surround_TL_box_element)
+            # print("TL box status:", surround_TL_box_status)
+
+            # ***THIS CODE IS FOR TESTING***
             print("Dict of boxes:", dict_of_boxes)
             print("Safe dict of boxes:", safe_dict_of_boxes)
             input("stop")
 
-
-
-
-
-            # if current_box_status == "square open0":
-
-            current_box_element.click()
-            current_box_status = current_box_element.get_attribute("class")
-            print("Current box status:", current_box_status)
-
-            if current_box_status == "square open0":
+            # *** END OBTAINING SURROUNDING BOX STATUSES ***
 
             # END OF WHILE LOOP - check face value after click
-                face_element = driver.find_element_by_id("face")
-                face_status_value = face_element.get_attribute("class")
+            face_element = driver.find_element_by_id("face")
+            face_status_value = face_element.get_attribute("class")
 
             # pause program if won
             if face_status_value == "facewin":
