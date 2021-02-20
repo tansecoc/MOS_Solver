@@ -13,39 +13,40 @@ PATH = "/Users/casimerotanseco/chromedriver/chromedriver"
 driver = webdriver.Chrome(PATH)
 driver.get("https://minesweeperonline.com/#beginner")
 
-# creates dictionary of box statuses, ID, and web-click elements for a 9x9 minesweeper grid
-dict_of_boxes = {}
-for i in range(1, 10):
-    for j in range(1, 10):
-        box_ID_variable = "x_" + str(i) + "_" + str(j)
-        box_ID_key = str(i) + "_" + str(j)
-        box_element = driver.find_element_by_id(box_ID_key)
-        dict_of_boxes[box_ID_variable] = ["square blank", box_element]
-
-# create safe dictionary for guessing
-safe_dict_of_boxes = {}
-for i in range(1, 10):
-    for j in range(1, 10):
-        safe_box_ID_variable = "x_" + str(i) + "_" + str(j)
-        safe_dict_of_boxes[safe_box_ID_variable] = 0
-
-# set initial face value
-# facesmile = game not started or game in progress
-# faceooh = mouseclick in progress
-# facewin = game has been won
-# facedead = game over; hit bomb
-face_element = driver.find_element_by_id("face")
-face_status_value = face_element.get_attribute("class")
-
 # game play counter and # of times to run program
 counter = 0
-games_to_play = 10
+games_to_play = 1
 
 # mineseweper solver algorithm
-for i in range(1, games_to_play + 1):
+for games in range(1, games_to_play + 1):
 
-    print("Start Game:", i)
+    print("Start Game:", games)
     counter += 1
+
+    # *** START NEW GAME ***
+    # creates dictionary of box statuses, ID, and web-click elements for a 9x9 minesweeper grid
+    dict_of_boxes = {}
+    for row in range(1, 10):
+        for column in range(1, 10):
+            box_ID_variable = "x_" + str(row) + "_" + str(column)
+            box_ID_key = str(row) + "_" + str(column)
+            box_element = driver.find_element_by_id(box_ID_key)
+            dict_of_boxes[box_ID_variable] = ["square blank", box_element]
+
+    # create safe dictionary for guessing
+    safe_dict_of_boxes = {}
+    for row in range(1, 10):
+        for column in range(1, 10):
+            safe_box_ID_variable = "x_" + str(row) + "_" + str(column)
+            safe_dict_of_boxes[safe_box_ID_variable] = 0
+
+    # set initial face value
+    # facesmile = game not started or game in progress
+    # faceooh = mouseclick in progress
+    # facewin = game has been won
+    # facedead = game over; hit bomb
+    face_element = driver.find_element_by_id("face")
+    face_status_value = face_element.get_attribute("class")
 
     # First Four Moves: click 4 corners, obtain box statuses, delete boxes from safe dictionary
     # try:
@@ -90,6 +91,8 @@ for i in range(1, games_to_play + 1):
     # restart game if face == dead
     elif face_status_value == "facedead":
         face_element.click()
+        print("Face value status:", face_status_value + ". Restarting game.")
+        continue
 
     # begin click guesses
     else:
@@ -106,17 +109,16 @@ for i in range(1, games_to_play + 1):
             current_box_status = current_box_element.get_attribute("class") # obtains box status
             dict_of_boxes[current_box_key][0] = current_box_status  # updates box status in box dictionary
             del safe_dict_of_boxes[current_box_key]  # deletes safe box key from safe dictionary
-            print("Clicked box:", current_box_key, ". Status:", current_box_status)
+            print("Clicked box:", current_box_key + ". Status:", current_box_status)
 
             # check status of boxes that surround current box and implement All-Free-Neighbors (AFN) logic
 
             # parse current box into a list to obtain starting point for surrounding boxes
             current_box_parse = list(current_box_key)
-            print("Current box parse:", current_box_parse)
 
             # *** BEGIN OBTAINING SURROUNDING BOX STATUSES ***
 
-            # obtain top-left box key and status, deletes from safe dictionary if "square open" == 0
+            # TOP-LEFT obtain box key and status, deletes from safe dictionary if "square open" == 0
             surround_TL_box_key = "No box"
             surround_TL_box_status = "null"
             surround_TL_box_element = ""
@@ -132,17 +134,178 @@ for i in range(1, games_to_play + 1):
                 if surround_TL_box_status == "square open0":
                     del safe_dict_of_boxes[surround_TL_box_key]  # deletes safe box key from safe dictionary
             except:
-                continue
+                pass
 
-            # # ***THIS CODE IS FOR TESTING***
-            # print("TL box key:", surround_TL_box_key)
+            # TOP-MIDDLE obtain box key and status, deletes from safe dictionary if "square open" == 0
+            surround_TM_box_key = "No box"
+            surround_TM_box_status = "null"
+            surround_TM_box_element = ""
+            try:
+                # get box coorindates
+                surround_TM_box_key = "x_" + str(int(current_box_parse[2]) - 1) + "_" \
+                                      + str(int(current_box_parse[4]))
+                # get box status
+                surround_TM_box_element = dict_of_boxes[surround_TM_box_key][1]  # get box web element
+                surround_TM_box_status = surround_TM_box_element.get_attribute("class")  # obtain box status
+                dict_of_boxes[surround_TM_box_key][0] = surround_TM_box_status  # updates box status in box dictionary
+
+                if surround_TM_box_status == "square open0":
+                    del safe_dict_of_boxes[surround_TM_box_key]  # deletes safe box key from safe dictionary
+            except:
+                pass
+
+            # TOP-RIGHT obtain box key and status, deletes from safe dictionary if "square open" == 0
+            surround_TR_box_key = "No box"
+            surround_TR_box_status = "null"
+            surround_TR_box_element = ""
+            try:
+                # get box coorindates
+                surround_TR_box_key = "x_" + str(int(current_box_parse[2]) - 1) + "_" \
+                                      + str(int(current_box_parse[4]) + 1)
+                # get box status
+                surround_TR_box_element = dict_of_boxes[surround_TR_box_key][1]  # get box web element
+                surround_TR_box_status = surround_TR_box_element.get_attribute("class")  # obtain box status
+                dict_of_boxes[surround_TR_box_key][0] = surround_TR_box_status  # updates box status in box dictionary
+
+                if surround_TR_box_status == "square open0":
+                    del safe_dict_of_boxes[surround_TR_box_key]  # deletes safe box key from safe dictionary
+            except:
+                pass
+
+            # LEFT-MIDDLE BOX obtain box key and status, deletes from safe dictionary if "square open" == 0
+            surround_LM_box_key = "No box"
+            surround_LM_box_status = "null"
+            surround_LM_box_element = ""
+            try:
+                # get box coorindates
+                surround_LM_box_key = "x_" + str(int(current_box_parse[2])) + "_" \
+                                      + str(int(current_box_parse[4]) - 1)
+                # get box status
+                surround_LM_box_element = dict_of_boxes[surround_LM_box_key][1]  # get box web element
+                surround_LM_box_status = surround_LM_box_element.get_attribute("class")  # obtain box status
+                dict_of_boxes[surround_LM_box_key][0] = surround_LM_box_status  # updates box status in box dictionary
+
+                if surround_LM_box_status == "square open0":
+                    del safe_dict_of_boxes[surround_LM_box_key]  # deletes safe box key from safe dictionary
+            except:
+                pass
+
+            # RIGHT-MIDDLE BOX obtain box key and status, deletes from safe dictionary if "square open" == 0
+            surround_RM_box_key = "No box"
+            surround_RM_box_status = "null"
+            surround_RM_box_element = ""
+            try:
+                # get box coorindates
+                surround_RM_box_key = "x_" + str(int(current_box_parse[2])) + "_" \
+                                      + str(int(current_box_parse[4]) + 1)
+                # get box status
+                surround_RM_box_element = dict_of_boxes[surround_RM_box_key][1]  # get box web element
+                surround_RM_box_status = surround_RM_box_element.get_attribute("class")  # obtain box status
+                dict_of_boxes[surround_RM_box_key][0] = surround_RM_box_status  # updates box status in box dictionary
+
+                if surround_RM_box_status == "square open0":
+                    del safe_dict_of_boxes[surround_RM_box_key]  # deletes safe box key from safe dictionary
+            except:
+                pass
+
+            # BOTTOM-LEFT BOX obtain box key and status, deletes from safe dictionary if "square open" == 0
+            surround_BL_box_key = "No box"
+            surround_BL_box_status = "null"
+            surround_BL_box_element = ""
+            try:
+                # get box coorindates
+                surround_BL_box_key = "x_" + str(int(current_box_parse[2]) + 1) + "_" \
+                                      + str(int(current_box_parse[4]) - 1)
+                # get box status
+                surround_BL_box_element = dict_of_boxes[surround_BL_box_key][1]  # get box web element
+                surround_BL_box_status = surround_BL_box_element.get_attribute("class")  # obtain box status
+                dict_of_boxes[surround_BL_box_key][0] = surround_BL_box_status  # updates box status in box dictionary
+
+                if surround_BL_box_status == "square open0":
+                    del safe_dict_of_boxes[surround_BL_box_key]  # deletes safe box key from safe dictionary
+            except:
+                pass
+
+            # BOTTOM-MIDDLE BOX obtain box key and status, deletes from safe dictionary if "square open" == 0
+            surround_BM_box_key = "No box"
+            surround_BM_box_status = "null"
+            surround_BM_box_element = ""
+            try:
+                # get box coorindates
+                surround_BM_box_key = "x_" + str(int(current_box_parse[2]) + 1) + "_" \
+                                      + str(int(current_box_parse[4]))
+                # get box status
+                surround_BM_box_element = dict_of_boxes[surround_BM_box_key][1]  # get box web element
+                surround_BM_box_status = surround_BM_box_element.get_attribute("class")  # obtain box status
+                dict_of_boxes[surround_BM_box_key][0] = surround_BM_box_status  # updates box status in box dictionary
+
+                if surround_BM_box_status == "square open0":
+                    del safe_dict_of_boxes[surround_BM_box_key]  # deletes safe box key from safe dictionary
+            except:
+                pass
+
+            # BOTTOM-RIGHT BOX obtain box key and status, deletes from safe dictionary if "square open" == 0
+            surround_BR_box_key = "No box"
+            surround_BR_box_status = "null"
+            surround_BR_box_element = ""
+            try:
+                # get box coorindates
+                surround_BR_box_key = "x_" + str(int(current_box_parse[2]) + 1) + "_" \
+                                      + str(int(current_box_parse[4]) + 1)
+                # get box status
+                surround_BR_box_element = dict_of_boxes[surround_BR_box_key][1]  # get box web element
+                surround_BR_box_status = surround_BR_box_element.get_attribute("class")  # obtain box status
+                dict_of_boxes[surround_BR_box_key][0] = surround_BR_box_status  # updates box status in box dictionary
+
+                if surround_BR_box_status == "square open0":
+                    del safe_dict_of_boxes[surround_BR_box_key]  # deletes safe box key from safe dictionary
+            except:
+                pass
+
+            # ***THIS CODE IS FOR TESTING THE SURROUNDING BOXES***
+
+            # Surrounding box keys
+            print("TL box key:", surround_TL_box_key)
+            print("TM box key:", surround_TM_box_key)
+            print("TR box key:", surround_TR_box_key)
+            print("LM box key:", surround_LM_box_key)
+            print("RM box key:", surround_RM_box_key)
+            print("BL box key:", surround_BL_box_key)
+            print("BM box key:", surround_BM_box_key)
+            print("BR box key:", surround_BR_box_key)
+
+            # Surrounding box elements
             # print("TL box element:", surround_TL_box_element)
-            # print("TL box status:", surround_TL_box_status)
+            # print("TM box element:", surround_TM_box_element)
+            # print("TR box element:", surround_TR_box_element)
+            # print("LM box element:", surround_LM_box_element)
+            # print("RM box element:", surround_RM_box_element)
+            # print("BL box element:", surround_BL_box_element)
+            # print("BM box element:", surround_BM_box_element)
+            # print("BR box element:", surround_BR_box_element)
+
+            # Surrounding box stauses
+            print("TL box status:", surround_TL_box_status)
+            print("TM box status:", surround_TM_box_status)
+            print("TR box status:", surround_TR_box_status)
+            print("LM box status:", surround_LM_box_status)
+            print("RM box status:", surround_RM_box_status)
+            print("BL box status:", surround_BL_box_status)
+            print("BM box status:", surround_BM_box_status)
+            print("BR box status:", surround_BR_box_status)
+
+
 
             # ***THIS CODE IS FOR TESTING***
-            print("Dict of boxes:", dict_of_boxes)
+            # print("Dict of boxes:", dict_of_boxes)
             print("Safe dict of boxes:", safe_dict_of_boxes)
-            input("stop")
+            # input("stop")
+
+
+
+
+
+            # *** Placeholder - delete surrounding boxes whose status == square open0 from safe dictionary
 
             # *** END OBTAINING SURROUNDING BOX STATUSES ***
 
@@ -158,3 +321,5 @@ for i in range(1, games_to_play + 1):
             # restart guessing while loop
             if face_status_value == "facedead":
                 print("Face value status:", face_status_value + ". Restarting game.")
+                face_element.click()
+                break
