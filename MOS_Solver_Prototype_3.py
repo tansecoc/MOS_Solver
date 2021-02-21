@@ -2,7 +2,7 @@ from selenium import webdriver
 from selenium.webdriver import ActionChains
 from collections import Counter
 import random
-import copy
+import time
 
 # box_status = box class status
 # box_ID = box ID number
@@ -132,7 +132,7 @@ for games in range(1, games_to_play + 1):
 
             # delete 'square open0' boxes from safe box dictionary
             for key in surrounding_box_dict:
-                if surrounding_box_dict[key][0] == "square open0":
+                if dict_of_boxes[key][0] == "square open0":
                     try:
                         print("Deleted box:", key)
                         del safe_dict_of_boxes[key]  # deletes box key from safe dictionary
@@ -152,18 +152,30 @@ for games in range(1, games_to_play + 1):
             if current_box_mine_neighbors != 0 and current_box_mine_neighbors != []:
                 for key in surrounding_box_dict:
                     surrounding_box_status_counter = Counter(surrounding_box_dict.values())
-
                 print("Surrounding box status counter:", surrounding_box_status_counter)
 
                 if current_box_mine_neighbors == surrounding_box_status_counter["square blank"]:
                     print("Mine neighbors match blank surrounding squares.  Initiating flag sequence.")
                     for key in surrounding_box_dict:
-                        print("Neighbor key:", key, ", Neighbor value:", surrounding_box_dict[key])
-                        if surrounding_box_dict[key] == "square blank":
-                            print("A flag will be placed on key:", key, "with status of", surrounding_box_dict[key])
-                            key_element_to_flag =  dict_of_boxes[key][1]
-                            actionChains.context_click(key_element_to_flag).perform()
-                            surrounding_box_dict
+                        print("Neighbor key:", key, ", Neighbor value:", dict_of_boxes[key][0])
+                        if dict_of_boxes[key][0] == "square blank":
+                            # print("A flag will be placed on key:", key, "with status of", dict_of_boxes[key][0])
+                            # key_element_to_flag = dict_of_boxes[key][1]
+                            # actionChains.context_click(key_element_to_flag).perform()
+                            # dict_of_boxes[key][0] = "square bombflagged"
+                            # surrounding_box_dict[key] = dict_of_boxes[key][0]
+
+                            try:
+                                print("Key:", key, "with status of", dict_of_boxes[key][0], "will be avoided")
+                                dict_of_boxes[key][0] = "square bombflagged"
+                                del safe_dict_of_boxes[key]  # deletes box key from safe dictionary
+                            except:
+                                pass
+
+                    for key in surrounding_box_dict:
+                        surrounding_box_status_counter = Counter(surrounding_box_dict.values())
+                    print("Refreshed surrounding box status counter:", surrounding_box_status_counter)
+
                     # input("stop")
 
 
