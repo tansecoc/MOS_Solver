@@ -18,7 +18,7 @@ actionChains = ActionChains(driver)
 
 # game play counter and # of times to run program
 counter = 0
-games_to_play = 100
+games_to_play = 1000
 
 # mineseweper solver algorithm
 for games in range(1, games_to_play + 1):
@@ -104,7 +104,7 @@ for games in range(1, games_to_play + 1):
 
             # parse current box into a list to obtain starting coordinates for surrounding boxes
             current_box_coordinates = (current_box_key)
-            print("Current box coordinates:", current_box_coordinates)
+            # print("Current box coordinates:", current_box_coordinates)
 
             coordinate_offsets = [(-1, -1), (-1, 0), (-1, 1),
                                   (0, -1), (0, 1),
@@ -121,7 +121,10 @@ for games in range(1, games_to_play + 1):
             surrounding_box_dict = {}
             for number in surrounding_box_coordinates:
                 try:
-                    surrounding_box_dict[number] = [dict_of_boxes[number][0], dict_of_boxes[number][1]]
+                    # update surrounding box statuses
+                    dict_of_boxes[number][0] = dict_of_boxes[number][1].get_attribute("class")
+                    print("The updated status of box", number, "is:", dict_of_boxes[number][0])
+                    surrounding_box_dict[number] = dict_of_boxes[number][0]  # adds box status as value
                 except:
                     continue
 
@@ -134,9 +137,37 @@ for games in range(1, games_to_play + 1):
                         print("Deleted box:", key)
                         del safe_dict_of_boxes[key]  # deletes box key from safe dictionary
                     except:
-                        continue
+                        pass
 
             print("Safe box dict:", safe_dict_of_boxes)
+
+            current_box_mine_neighbors = []
+            try:
+                current_box_mine_neighbors = int(current_box_status[-1])
+                print("Current box:", str(current_box_key) + ". Current box mine neighbors:",
+                      str(current_box_mine_neighbors))
+            except:
+                pass
+
+            if current_box_mine_neighbors != 0 and current_box_mine_neighbors != []:
+                for key in surrounding_box_dict:
+                    surrounding_box_status_counter = Counter(surrounding_box_dict.values())
+
+                print("Surrounding box status counter:", surrounding_box_status_counter)
+
+                if current_box_mine_neighbors == surrounding_box_status_counter["square blank"]:
+                    print("Mine neighbors match blank surrounding squares.  Initiating flag sequence.")
+                    for key in surrounding_box_dict:
+                        print("Neighbor key:", key, ", Neighbor value:", surrounding_box_dict[key])
+                        if surrounding_box_dict[key] == "square blank":
+                            print("A flag will be placed on key:", key, "with status of", surrounding_box_dict[key])
+                            key_element_to_flag =  dict_of_boxes[key][1]
+                            actionChains.context_click(key_element_to_flag).perform()
+                            surrounding_box_dict
+                    # input("stop")
+
+
+
             # input("stop")
 
             # *** BEGIN OBTAINING SURROUNDING BOX STATUSES ***
