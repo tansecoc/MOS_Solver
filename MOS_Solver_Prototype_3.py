@@ -64,8 +64,9 @@ for games in range(1, games_to_play + 1):
         current_box_element = dict_of_boxes[current_box_key][1]  # sets current box element to corner
         current_box_status = current_box_element.get_attribute("class")  # obtains box status
         dict_of_boxes[current_box_key][0] = current_box_status  # updates box status in box dictionary
-        del safe_dict_of_boxes[current_box_key]  # deletes safe box key from safe dictionary
         print("Clicked box:", str(current_box_key) + ". Status:", dict_of_boxes[current_box_key][0])
+        print("Deleted box:", current_box_key)
+        del safe_dict_of_boxes[current_box_key]  # deletes safe box key from safe dictionary
 
     # check face value
     face_element = driver.find_element_by_id("face")
@@ -95,8 +96,9 @@ for games in range(1, games_to_play + 1):
             # obtain current box status, deletes current box from safe dictionary
             current_box_status = current_box_element.get_attribute("class")  # obtains box status
             dict_of_boxes[current_box_key][0] = current_box_status  # updates box status in box dictionary
-            del safe_dict_of_boxes[current_box_key]  # deletes box key from safe dictionary
             print("Clicked box:", str(current_box_key) + ". Status:", dict_of_boxes[current_box_key][0])
+            print("Deleted box:", current_box_key)
+            del safe_dict_of_boxes[current_box_key]  # deletes box key from safe dictionary
 
             # check status of boxes that surround current box and implement All-Free-Neighbors (AFN) logic
 
@@ -123,8 +125,19 @@ for games in range(1, games_to_play + 1):
                 except:
                     continue
 
-            print(surrounding_box_dict)
-            input("stop")
+            print("Surrounding box dictionary:", surrounding_box_dict)
+
+            # delete 'square open0' boxes from safe box dictionary
+            for key in surrounding_box_dict:
+                if surrounding_box_dict[key][0] == "square open0":
+                    try:
+                        print("Deleted box:", key)
+                        del safe_dict_of_boxes[key]  # deletes box key from safe dictionary
+                    except:
+                        continue
+
+            print("Safe box dict:", safe_dict_of_boxes)
+            # input("stop")
 
             # *** BEGIN OBTAINING SURROUNDING BOX STATUSES ***
 
