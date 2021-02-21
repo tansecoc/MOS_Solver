@@ -18,7 +18,7 @@ actionChains = ActionChains(driver)
 
 # game play counter and # of times to run program
 counter = 0
-games_to_play = 10
+games_to_play = 100
 
 # mineseweper solver algorithm
 for games in range(1, games_to_play + 1):
@@ -35,6 +35,7 @@ for games in range(1, games_to_play + 1):
             box_ID_key = str(row) + "_" + str(column)
             box_element = driver.find_element_by_id(box_ID_key)
             dict_of_boxes[box_ID_variable] = ["square blank", box_element]
+    # print("Starting dict of boxes:", dict_of_boxes)
 
     # create safe dictionary for guessing
     safe_dict_of_boxes = {}
@@ -42,6 +43,7 @@ for games in range(1, games_to_play + 1):
         for column in range(1, 10):
             safe_box_ID_variable = "x_" + str(row) + "_" + str(column)
             safe_dict_of_boxes[safe_box_ID_variable] = 0
+    # print("starting safe dict:", safe_dict_of_boxes)
 
     # set initial face value
     # facesmile = game not started or game in progress
@@ -50,6 +52,7 @@ for games in range(1, games_to_play + 1):
     # facedead = game over; hit bomb
     face_element = driver.find_element_by_id("face")
     face_status_value = face_element.get_attribute("class")
+    # print("starting face value:", face_status_value)
 
     # First Four Moves: click 4 corners, obtain box statuses, delete boxes from safe dictionary
     # try:
@@ -82,6 +85,7 @@ for games in range(1, games_to_play + 1):
     del safe_dict_of_boxes[current_box_key ]# deletes safe box key from safe dictionary
     # except:
     #     continue
+    # print(safe_dict_of_boxes)
 
     # check face value
     face_element = driver.find_element_by_id("face")
@@ -175,39 +179,39 @@ for games in range(1, games_to_play + 1):
             except:
                 pass
 
-            # LEFT-MIDDLE BOX obtain box key and status, deletes from safe dictionary if "square open" == 0
-            surround_LM_box_key = "No box"
-            surround_LM_box_status = "null"
-            surround_LM_box_element = ""
+            # MIDDLE-LEFT BOX obtain box key and status, deletes from safe dictionary if "square open" == 0
+            surround_ML_box_key = "No box"
+            surround_ML_box_status = "null"
+            surround_ML_box_element = ""
             try:
                 # get box coorindates
-                surround_LM_box_key = "x_" + str(int(current_box_parse[2])) + "_" \
+                surround_ML_box_key = "x_" + str(int(current_box_parse[2])) + "_" \
                                       + str(int(current_box_parse[4]) - 1)
                 # get box status
-                surround_LM_box_element = dict_of_boxes[surround_LM_box_key][1]  # get box web element
-                surround_LM_box_status = surround_LM_box_element.get_attribute("class")  # obtain box status
-                dict_of_boxes[surround_LM_box_key][0] = surround_LM_box_status  # updates box status in box dictionary
+                surround_ML_box_element = dict_of_boxes[surround_ML_box_key][1]  # get box web element
+                surround_ML_box_status = surround_ML_box_element.get_attribute("class")  # obtain box status
+                dict_of_boxes[surround_ML_box_key][0] = surround_ML_box_status  # updates box status in box dictionary
 
-                if surround_LM_box_status == "square open0":
-                    del safe_dict_of_boxes[surround_LM_box_key]  # deletes safe box key from safe dictionary
+                if surround_ML_box_status == "square open0":
+                    del safe_dict_of_boxes[surround_ML_box_key]  # deletes safe box key from safe dictionary
             except:
                 pass
 
-            # RIGHT-MIDDLE BOX obtain box key and status, deletes from safe dictionary if "square open" == 0
-            surround_RM_box_key = "No box"
-            surround_RM_box_status = "null"
-            surround_RM_box_element = ""
+            # MIDDLE-RIGHT BOX obtain box key and status, deletes from safe dictionary if "square open" == 0
+            surround_MR_box_key = "No box"
+            surround_MR_box_status = "null"
+            surround_MR_box_element = ""
             try:
                 # get box coorindates
-                surround_RM_box_key = "x_" + str(int(current_box_parse[2])) + "_" \
+                surround_MR_box_key = "x_" + str(int(current_box_parse[2])) + "_" \
                                       + str(int(current_box_parse[4]) + 1)
                 # get box status
-                surround_RM_box_element = dict_of_boxes[surround_RM_box_key][1]  # get box web element
-                surround_RM_box_status = surround_RM_box_element.get_attribute("class")  # obtain box status
-                dict_of_boxes[surround_RM_box_key][0] = surround_RM_box_status  # updates box status in box dictionary
+                surround_MR_box_element = dict_of_boxes[surround_MR_box_key][1]  # get box web element
+                surround_MR_box_status = surround_MR_box_element.get_attribute("class")  # obtain box status
+                dict_of_boxes[surround_MR_box_key][0] = surround_MR_box_status  # updates box status in box dictionary
 
-                if surround_RM_box_status == "square open0":
-                    del safe_dict_of_boxes[surround_RM_box_key]  # deletes safe box key from safe dictionary
+                if surround_MR_box_status == "square open0":
+                    del safe_dict_of_boxes[surround_MR_box_key]  # deletes safe box key from safe dictionary
             except:
                 pass
 
@@ -271,8 +275,8 @@ for games in range(1, games_to_play + 1):
             print("TL box key:", surround_TL_box_key + ". Status:", surround_TL_box_status)
             print("TM box key:", surround_TM_box_key + ". Status:", surround_TM_box_status)
             print("TR box key:", surround_TR_box_key + ". Status:", surround_TR_box_status)
-            print("LM box key:", surround_LM_box_key + ". Status:", surround_LM_box_status)
-            print("RM box key:", surround_RM_box_key + ". Status:", surround_RM_box_status)
+            print("ML box key:", surround_ML_box_key + ". Status:", surround_ML_box_status)
+            print("MR box key:", surround_MR_box_key + ". Status:", surround_MR_box_status)
             print("BL box key:", surround_BL_box_key + ". Status:", surround_BL_box_status)
             print("BM box key:", surround_BM_box_key + ". Status:", surround_BM_box_status)
             print("BR box key:", surround_BR_box_key + ". Status:", surround_BR_box_status)
@@ -281,8 +285,8 @@ for games in range(1, games_to_play + 1):
             # print("TL box element:", surround_TL_box_element)
             # print("TM box element:", surround_TM_box_element)
             # print("TR box element:", surround_TR_box_element)
-            # print("LM box element:", surround_LM_box_element)
-            # print("RM box element:", surround_RM_box_element)
+            # print("ML box element:", surround_ML_box_element)
+            # print("MR box element:", surround_MR_box_element)
             # print("BL box element:", surround_BL_box_element)
             # print("BM box element:", surround_BM_box_element)
             # print("BR box element:", surround_BR_box_element)
@@ -308,8 +312,8 @@ for games in range(1, games_to_play + 1):
                     surround_TL_box_key:surround_TL_box_status,
                     surround_TM_box_key:surround_TM_box_status,
                     surround_TR_box_key:surround_TR_box_status,
-                    surround_LM_box_key:surround_LM_box_status,
-                    surround_RM_box_key:surround_RM_box_status,
+                    surround_ML_box_key:surround_ML_box_status,
+                    surround_MR_box_key:surround_MR_box_status,
                     surround_BL_box_key:surround_BL_box_status,
                     surround_BM_box_key:surround_BM_box_status,
                     surround_BR_box_key:surround_BR_box_status
@@ -328,14 +332,77 @@ for games in range(1, games_to_play + 1):
                     # print("MATCH: Free neighbor count:", free_neighbors_count, ". Square Blank:",
                     #       surrounding_box_status_counter["square blank"])
 
-                    # surround TL box flag check
-                    if surround_TL_box_status == "square blank":
-                        actionChains.context_click(surround_TL_box_element).perform()
-                        surround_TL_box_status = "square bombflagged"
-                        dict_of_boxes[surround_TL_box_key][0] = \
-                            surround_TL_box_status  # updates box status in box dictionary
-                        print("Flagged:", surround_TL_box_key)
+                   try:
+                        # surround TL box flag check
+                        if surround_TL_box_status == "square blank":
+                            actionChains.context_click(surround_TL_box_element).perform()
+                            surround_TL_box_status = "square bombflagged"
+                            dict_of_boxes[surround_TL_box_key][0] = \
+                                surround_TL_box_status  # updates box status in box dictionary
+                            del safe_dict_of_boxes[surround_TL_box_key]  # deletes safe box key from safe dictionary
+                            # print("Flagged:", surround_TL_box_key)
+                            # print("Surround TL Box key:", surround_TL_box_key)
+                            # print("Surround TL Box status:", surround_TL_box_status)
+                            # print("Dict of boxes:", dict_of_boxes)
+                            # print("Dict of safe boxes:", safe_dict_of_boxes)
 
+                        # surround TM box flag check
+                        if surround_TM_box_status == "square blank":
+                            actionChains.context_click(surround_TM_box_element).perform()
+                            surround_TM_box_status = "square bombflagged"
+                            dict_of_boxes[surround_TM_box_key][0] = \
+                                surround_TM_box_status  # updates box status in box dictionary
+                            del safe_dict_of_boxes[surround_TM_box_key]  # deletes safe box key from safe dictionary
+
+                        # surround TR box flag check
+                        if surround_TR_box_status == "square blank":
+                            actionChains.context_click(surround_TR_box_element).perform()
+                            surround_TR_box_status = "square bombflagged"
+                            dict_of_boxes[surround_TR_box_key][0] = \
+                                surround_TR_box_status  # updates box status in box dictionary
+                            del safe_dict_of_boxes[surround_TR_box_key]  # deletes safe box key from safe dictionary
+
+                        # surround ML box flag check
+                        if surround_ML_box_status == "square blank":
+                            actionChains.context_click(surround_ML_box_element).perform()
+                            surround_ML_box_status = "square bombflagged"
+                            dict_of_boxes[surround_ML_box_key][0] = \
+                                surround_ML_box_status  # updates box status in box dictionary
+                            del safe_dict_of_boxes[surround_ML_box_key]  # deletes safe box key from safe dictionary
+
+                        # surround MR box flag check
+                        if surround_MR_box_status == "square blank":
+                            actionChains.context_click(surround_MR_box_element).perform()
+                            surround_MR_box_status = "square bombflagged"
+                            dict_of_boxes[surround_MR_box_key][0] = \
+                                surround_MR_box_status  # updates box status in box dictionary
+                            del safe_dict_of_boxes[surround_MR_box_key]  # deletes safe box key from safe dictionary
+
+                        # surround BL box flag check
+                        if surround_BL_box_status == "square blank":
+                            actionChains.context_click(surround_BL_box_element).perform()
+                            surround_BL_box_status = "square bombflagged"
+                            dict_of_boxes[surround_BL_box_key][0] = \
+                                surround_BL_box_status  # updates box status in box dictionary
+                            del safe_dict_of_boxes[surround_BL_box_key]  # deletes safe box key from safe dictionary
+
+                        # surround BM box flag check
+                        if surround_BM_box_status == "square blank":
+                            actionChains.context_click(surround_BM_box_element).perform()
+                            surround_BM_box_status = "square bombflagged"
+                            dict_of_boxes[surround_BM_box_key][0] = \
+                                surround_BM_box_status  # updates box status in box dictionary
+                            del safe_dict_of_boxes[surround_BM_box_key]  # deletes safe box key from safe dictionary
+
+                        # surround BR box flag check
+                        if surround_BR_box_status == "square blank":
+                            actionChains.context_click(surround_BR_box_element).perform()
+                            surround_BR_box_status = "square bombflagged"
+                            dict_of_boxes[surround_BR_box_key][0] = \
+                                surround_BR_box_status  # updates box status in box dictionary
+                            del safe_dict_of_boxes[surround_BR_box_key]  # deletes safe box key from safe dictionary
+                   except:
+                       pass
 
 
             # ***THIS CODE IS FOR TESTING***
