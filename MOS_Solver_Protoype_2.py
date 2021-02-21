@@ -13,9 +13,12 @@ PATH = "/Users/casimerotanseco/chromedriver/chromedriver"
 driver = webdriver.Chrome(PATH)
 driver.get("https://minesweeperonline.com/#beginner")
 
+# enables mouse left-click
+actionChains = ActionChains(driver)
+
 # game play counter and # of times to run program
 counter = 0
-games_to_play = 1
+games_to_play = 10
 
 # mineseweper solver algorithm
 for games in range(1, games_to_play + 1):
@@ -264,15 +267,15 @@ for games in range(1, games_to_play + 1):
 
             # ***THIS CODE IS FOR TESTING THE SURROUNDING BOXES***
 
-            # Surrounding box keys
-            print("TL box key:", surround_TL_box_key)
-            print("TM box key:", surround_TM_box_key)
-            print("TR box key:", surround_TR_box_key)
-            print("LM box key:", surround_LM_box_key)
-            print("RM box key:", surround_RM_box_key)
-            print("BL box key:", surround_BL_box_key)
-            print("BM box key:", surround_BM_box_key)
-            print("BR box key:", surround_BR_box_key)
+            # Surrounding box keys and statuses
+            print("TL box key:", surround_TL_box_key + ". Status:", surround_TL_box_status)
+            print("TM box key:", surround_TM_box_key + ". Status:", surround_TM_box_status)
+            print("TR box key:", surround_TR_box_key + ". Status:", surround_TR_box_status)
+            print("LM box key:", surround_LM_box_key + ". Status:", surround_LM_box_status)
+            print("RM box key:", surround_RM_box_key + ". Status:", surround_RM_box_status)
+            print("BL box key:", surround_BL_box_key + ". Status:", surround_BL_box_status)
+            print("BM box key:", surround_BM_box_key + ". Status:", surround_BM_box_status)
+            print("BR box key:", surround_BR_box_key + ". Status:", surround_BR_box_status)
 
             # Surrounding box elements
             # print("TL box element:", surround_TL_box_element)
@@ -284,28 +287,64 @@ for games in range(1, games_to_play + 1):
             # print("BM box element:", surround_BM_box_element)
             # print("BR box element:", surround_BR_box_element)
 
-            # Surrounding box stauses
-            print("TL box status:", surround_TL_box_status)
-            print("TM box status:", surround_TM_box_status)
-            print("TR box status:", surround_TR_box_status)
-            print("LM box status:", surround_LM_box_status)
-            print("RM box status:", surround_RM_box_status)
-            print("BL box status:", surround_BL_box_status)
-            print("BM box status:", surround_BM_box_status)
-            print("BR box status:", surround_BR_box_status)
+            # *** Placeholder - delete surrounding boxes whose status == square open0 from safe dictionary
+
+            # obtain number of bombs surrounding current box
+            free_neighbors_count = 0
+            try:
+                free_neighbors_count = int(current_box_status[-1])
+            except:
+                pass
+
+            # skip AFN logic if current box value is blank
+            if free_neighbors_count == 0:
+                pass
+
+            # apply AFN logic
+            else:
+
+                # create surrounding box status dictionary
+                surrounding_box_status_dict = {
+                    surround_TL_box_key:surround_TL_box_status,
+                    surround_TM_box_key:surround_TM_box_status,
+                    surround_TR_box_key:surround_TR_box_status,
+                    surround_LM_box_key:surround_LM_box_status,
+                    surround_RM_box_key:surround_RM_box_status,
+                    surround_BL_box_key:surround_BL_box_status,
+                    surround_BM_box_key:surround_BM_box_status,
+                    surround_BR_box_key:surround_BR_box_status
+                    }
+
+                # creates surrounding box status counter
+                surrounding_box_status_counter = Counter(surrounding_box_status_dict.values())
+
+                print("Surrounding box status dictionary:", surrounding_box_status_dict)
+                print("Surrounding box status counter:", surrounding_box_status_counter)
+
+                # checks if current box value matches number of blank surrounding boxes
+                # if so, then flag all blank surrounding boxes
+                if free_neighbors_count == surrounding_box_status_counter["square blank"]:
+
+                    # print("MATCH: Free neighbor count:", free_neighbors_count, ". Square Blank:",
+                    #       surrounding_box_status_counter["square blank"])
+
+                    # surround TL box flag check
+                    if surround_TL_box_status == "square blank":
+                        actionChains.context_click(surround_TL_box_element).perform()
+                        surround_TL_box_status = "square bombflagged"
+                        dict_of_boxes[surround_TL_box_key][0] = \
+                            surround_TL_box_status  # updates box status in box dictionary
+                        print("Flagged:", surround_TL_box_key)
 
 
 
             # ***THIS CODE IS FOR TESTING***
-            # print("Dict of boxes:", dict_of_boxes)
-            print("Safe dict of boxes:", safe_dict_of_boxes)
+            # print("Dict of boxes:")
+            # for keys in dict_of_boxes:
+            #     print(keys, dict_of_boxes[keys][0])
+            # print("Safe dict of boxes:", safe_dict_of_boxes)
             # input("stop")
 
-
-
-
-
-            # *** Placeholder - delete surrounding boxes whose status == square open0 from safe dictionary
 
             # *** END OBTAINING SURROUNDING BOX STATUSES ***
 
