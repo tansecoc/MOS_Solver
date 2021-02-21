@@ -107,6 +107,8 @@ for games in range(1, games_to_play + 1):
         # if game is not dead or won then continue guessing loop
         while face_status_value != "facedead" or face_status_value != "facewin":
 
+            print(safe_dict_of_boxes)
+
             # click random box from safe dictionary
             current_box_key = random.choice(list(safe_dict_of_boxes.keys())) # sets random current box
             current_box_element = dict_of_boxes[current_box_key][1] # sets current box web-click element
@@ -291,7 +293,7 @@ for games in range(1, games_to_play + 1):
             # print("BM box element:", surround_BM_box_element)
             # print("BR box element:", surround_BR_box_element)
 
-            # *** Placeholder - delete surrounding boxes whose status == square open0 from safe dictionary
+            # *** Delete surrounding boxes whose status == square open0 from safe dictionary
 
             # obtain number of bombs surrounding current box
             free_neighbors_count = 0
@@ -329,12 +331,14 @@ for games in range(1, games_to_play + 1):
                 # if so, then flag all blank surrounding boxes
                 if free_neighbors_count == surrounding_box_status_counter["square blank"]:
 
-                    # print("MATCH: Free neighbor count:", free_neighbors_count, ". Square Blank:",
-                    #       surrounding_box_status_counter["square blank"])
+                    print("MATCH: Free neighbor count:", free_neighbors_count, ". Square Blank:",
+                          surrounding_box_status_counter["square blank"])
 
-                   try:
+                    try:
                         # surround TL box flag check
-                        if surround_TL_box_status == "square blank":
+                        if surround_TL_box_status == "square bombflagged":
+                            pass
+                        elif surround_TL_box_status == "square blank":
                             actionChains.context_click(surround_TL_box_element).perform()
                             surround_TL_box_status = "square bombflagged"
                             dict_of_boxes[surround_TL_box_key][0] = \
@@ -347,7 +351,9 @@ for games in range(1, games_to_play + 1):
                             # print("Dict of safe boxes:", safe_dict_of_boxes)
 
                         # surround TM box flag check
-                        if surround_TM_box_status == "square blank":
+                        if surround_TM_box_status == "square bombflagged":
+                            pass
+                        elif surround_TM_box_status == "square blank":
                             actionChains.context_click(surround_TM_box_element).perform()
                             surround_TM_box_status = "square bombflagged"
                             dict_of_boxes[surround_TM_box_key][0] = \
@@ -355,7 +361,9 @@ for games in range(1, games_to_play + 1):
                             del safe_dict_of_boxes[surround_TM_box_key]  # deletes safe box key from safe dictionary
 
                         # surround TR box flag check
-                        if surround_TR_box_status == "square blank":
+                        if surround_TR_box_status == "square bombflagged":
+                            pass
+                        elif surround_TR_box_status == "square blank":
                             actionChains.context_click(surround_TR_box_element).perform()
                             surround_TR_box_status = "square bombflagged"
                             dict_of_boxes[surround_TR_box_key][0] = \
@@ -363,7 +371,9 @@ for games in range(1, games_to_play + 1):
                             del safe_dict_of_boxes[surround_TR_box_key]  # deletes safe box key from safe dictionary
 
                         # surround ML box flag check
-                        if surround_ML_box_status == "square blank":
+                        if surround_ML_box_status == "square bombflagged":
+                            pass
+                        elif surround_ML_box_status == "square blank":
                             actionChains.context_click(surround_ML_box_element).perform()
                             surround_ML_box_status = "square bombflagged"
                             dict_of_boxes[surround_ML_box_key][0] = \
@@ -371,7 +381,9 @@ for games in range(1, games_to_play + 1):
                             del safe_dict_of_boxes[surround_ML_box_key]  # deletes safe box key from safe dictionary
 
                         # surround MR box flag check
-                        if surround_MR_box_status == "square blank":
+                        if surround_MR_box_status == "square bombflagged":
+                            pass
+                        elif surround_MR_box_status == "square blank":
                             actionChains.context_click(surround_MR_box_element).perform()
                             surround_MR_box_status = "square bombflagged"
                             dict_of_boxes[surround_MR_box_key][0] = \
@@ -379,7 +391,9 @@ for games in range(1, games_to_play + 1):
                             del safe_dict_of_boxes[surround_MR_box_key]  # deletes safe box key from safe dictionary
 
                         # surround BL box flag check
-                        if surround_BL_box_status == "square blank":
+                        if surround_BL_box_status == "square bombflagged":
+                            pass
+                        elif surround_BL_box_status == "square blank":
                             actionChains.context_click(surround_BL_box_element).perform()
                             surround_BL_box_status = "square bombflagged"
                             dict_of_boxes[surround_BL_box_key][0] = \
@@ -387,7 +401,9 @@ for games in range(1, games_to_play + 1):
                             del safe_dict_of_boxes[surround_BL_box_key]  # deletes safe box key from safe dictionary
 
                         # surround BM box flag check
-                        if surround_BM_box_status == "square blank":
+                        if surround_BR_box_status == "square bombflagged":
+                            pass
+                        elif surround_BM_box_status == "square blank":
                             actionChains.context_click(surround_BM_box_element).perform()
                             surround_BM_box_status = "square bombflagged"
                             dict_of_boxes[surround_BM_box_key][0] = \
@@ -395,14 +411,18 @@ for games in range(1, games_to_play + 1):
                             del safe_dict_of_boxes[surround_BM_box_key]  # deletes safe box key from safe dictionary
 
                         # surround BR box flag check
-                        if surround_BR_box_status == "square blank":
+                        if surround_BR_box_status == "square bombflagged":
+                            pass
+                        elif surround_BR_box_status == "square blank":
                             actionChains.context_click(surround_BR_box_element).perform()
                             surround_BR_box_status = "square bombflagged"
                             dict_of_boxes[surround_BR_box_key][0] = \
                                 surround_BR_box_status  # updates box status in box dictionary
                             del safe_dict_of_boxes[surround_BR_box_key]  # deletes safe box key from safe dictionary
-                   except:
+                    except:
                        pass
+
+                    print("Surrounding box status dictionary:", surrounding_box_status_dict)
 
 
             # ***THIS CODE IS FOR TESTING***
