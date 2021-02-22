@@ -75,7 +75,7 @@ for games in range(1, games_to_play + 1):
         print("Face value status:", face_status_value + ". GAME OVER.  Restarting game...")
         continue
 
-    # ***BEGIN GUESSES LOOP***
+    # ***START OF GUESSES LOOP ITERATION***
     else:
 
         # if game is not dead or won then continue guessing loop
@@ -105,7 +105,7 @@ for games in range(1, games_to_play + 1):
             if len(safe_dict_of_boxes) == 10 and dict_of_boxes[current_box_key][0] != "square bombrevealed":
                 input("PROGRAM PAUSED!!! YOU WON!!!!")
 
-            # ***START AMN LOGIC***
+            # ***START LOGIC TO OBTAIN STATUSES OF SURROUNDING BOXES***
 
             # create list of coordinates for coordinates that surround the current box
             surrounding_box_coordinates = []
@@ -123,8 +123,8 @@ for games in range(1, games_to_play + 1):
                     surrounding_box_dict[coordinate] = dict_of_boxes[coordinate][0]  # adds box status as value
                 except:
                     continue
-            # print("Dict of boxes:", dict_of_boxes)
             # print("Surrounding box dict:", surrounding_box_dict)
+            # print("Dict of boxes:", dict_of_boxes)
 
             # delete 'square open0' boxes from safe box dictionary
             for key in surrounding_box_dict:
@@ -132,17 +132,64 @@ for games in range(1, games_to_play + 1):
                     try:
                         del safe_dict_of_boxes[key]  # deletes box key from safe dictionary
                         print("Deleted surrounding box:", key, "Status:", dict_of_boxes[key][0])
+                        print("Values remaining in safe dict:", len(safe_dict_of_boxes))
                     except:
                         pass
-
-            print("Dict of boxes:", dict_of_boxes)
             print("Surrounding box dict:", surrounding_box_dict)
+            # print("Dict of boxes:", dict_of_boxes)
 
+            # ***END LOGIC TO OBTAIN STATUSES OF SURROUNDING BOXES***
 
+            # ***START LOGIC TO FLAG ALL AMNs***
 
+            # obtain count of mine neighbors for current box
+            current_box_mine_neighbors = None
+            try:
+                current_box_mine_neighbors = int(current_box_status[-1])  # pulls last character of box status
+                print("Current box:", str(current_box_key), "Mine neighbors:", str(current_box_mine_neighbors))
+            except:
+                print("Current box:", str(current_box_key), "has 0 mine neighbors or is bombdeath")
 
+            # AMN FLAG logic: proceed if current box has known mine neighbors
+            if current_box_mine_neighbors != 0 and current_box_mine_neighbors != None:
 
-            # END OF WHILE LOOP - check face value after click
+                # count number of occurrences of box status for each surrounding boxes
+                for key in surrounding_box_dict:
+                    surrounding_box_status_counter = Counter(surrounding_box_dict.values())
+                print("Surrounding box status counter:", surrounding_box_status_counter)
+
+                # if current box mine neighbors == count of blank surrounding squares then flag those squares
+                if current_box_mine_neighbors == surrounding_box_status_counter["square blank"]:
+                    print("Mine neighbors match blank surrounding squares.  Initiating flag sequence.")
+
+                    # prints neighbor key statuses.  If blank then bomb flag in main dict and delete from safe dict
+                    for key in surrounding_box_dict:
+
+                        # print neighbor key status
+                        print("Neighbor key:", key, ", Neighbor value:", dict_of_boxes[key][0])
+
+                        # if neighbor status is square blank then flag in main dict and delete from safe dict
+                        if dict_of_boxes[key][0] == "square blank":
+
+                            # flag neighbor status in main dict with bomb flag
+                            dict_of_boxes[key][0] = "square bombflagged"  # flag neighbor in main dict
+                            print("Key:", key, "with status of", dict_of_boxes[key][0],
+                                      "is flagged in main dict")
+
+                            # delete neighbor from safe dict
+                            try:
+                                del safe_dict_of_boxes[key]  # deletes neighbor from safe dictionary
+                                print("Key:", key, "with status of", dict_of_boxes[key][0],
+                                      "is deleted from safe dict")
+                                print("Values remaining in safe dict:", len(safe_dict_of_boxes))
+
+                            except:
+                                print("ERROR: Key:", key, "with status of", dict_of_boxes[key][0],
+                                      "is NOT deleted from safe dict")
+
+                print("Safe box dict:", safe_dict_of_boxes)
+
+            # ***END OF GUESS LOOP ITERATION - check face value after click***
             face_element = driver.find_element_by_id("face")
             face_status_value = face_element.get_attribute("class")
 
