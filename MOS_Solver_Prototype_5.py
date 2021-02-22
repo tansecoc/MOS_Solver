@@ -11,7 +11,7 @@ driver.get("https://minesweeperonline.com/#beginner")
 
 # game play counter and # of times to run program
 counter = 0
-games_to_play = 1000
+games_to_play = 10000
 
 # mineseweper solver algorithm
 for games in range(1, games_to_play + 1):
@@ -92,10 +92,23 @@ for games in range(1, games_to_play + 1):
                 # Switch the control to the Alert window
                 obj = driver.switch_to.alert
 
-                time.sleep(100)
+                time.sleep(1)
 
                 # Enter text into the Alert using send_keys()
-                obj.send_keys('CasTan')
+                obj.send_keys("3/2 Lima")
+
+                # Click Accept in alert box
+                obj.accept()
+
+                print("YOU WON!!!")
+
+                # restart game
+                face_element = driver.find_element_by_id("face")
+                face_status_value = face_element.get_attribute("class")
+                print("Face value status:", face_status_value + ". Restarting game.")
+                face_element.click()
+                break
+
             except:
                 pass
 
