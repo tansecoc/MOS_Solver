@@ -1,6 +1,8 @@
 from selenium import webdriver
+from selenium.webdriver import ActionChains
 from collections import Counter
 import random
+import time
 
 # opens minesweeper website
 PATH = "/Users/casimerotanseco/chromedriver/chromedriver"
@@ -36,7 +38,7 @@ for games in range(1, games_to_play + 1):
         for column in range(1, 10):
             safe_dict_of_boxes[(int(row), int(column))] = 0
 
-    print("Values remaining in safe dict:", len(safe_dict_of_boxes))
+    # print("Values remaining in safe dict:", len(safe_dict_of_boxes))
 
     # Coordinate offsets for AMN logic
     coordinate_offsets = [(-1, -1), (-1, 0), (-1, 1),
@@ -62,7 +64,7 @@ for games in range(1, games_to_play + 1):
         del safe_dict_of_boxes[current_box_key]
         print("Deleted box:", current_box_key)
 
-        print("Values remaining in safe dict:", len(safe_dict_of_boxes))
+        # print("Values remaining in safe dict:", len(safe_dict_of_boxes))
 
     # check face value
     face_element = driver.find_element_by_id("face")
@@ -80,43 +82,24 @@ for games in range(1, games_to_play + 1):
         # if game is not dead or won then continue guessing loop
         while face_status_value != "facedead":
 
-            # update current board status
-            for key in dict_of_boxes:
-                current_box_element = dict_of_boxes[current_box_key][1]  # sets current box element
-                current_box_status = current_box_element.get_attribute("class")  # obtains box status
-                dict_of_boxes[current_box_key][0] = current_box_status  # updates box status in box dictionary
-            print("Dict of boxes statuses:", dict_of_boxes)
-
-            # count current board status occurrences
-            dict_of_boxes_status_counter = Counter()
-            for key in dict_of_boxes:
-                dict_of_boxes_status_counter.update(dict_of_boxes[key])
-
-                # deletes key from safe dict if status is square open0
-                if dict_of_boxes[key][0] == "square open0":
-                    try:
-                        del safe_dict_of_boxes[key]
-                        print("Deleted box:", key)
-                    except:
-                        pass
-            print("Dict of boxes counter:", dict_of_boxes_status_counter)
-
-            # checks if count of square blanks == 11; if so, click one more box and pause game
-            if dict_of_boxes_status_counter["square blank"] == 11:
-                # click one last random box and pause
-                current_box_key = random.choice(list(safe_dict_of_boxes.keys()))  # pull random key from safe dict
-                current_box_element = dict_of_boxes[current_box_key][1]  # sets current box web-click element
-                current_box_element.click()  # clicks current box
-                input("YOU HAVE WON!!!")
-
             # click random box from safe dictionary
             current_box_key = random.choice(list(safe_dict_of_boxes.keys()))  # pull random key from safe dict
             current_box_element = dict_of_boxes[current_box_key][1]  # sets current box web-click element
             current_box_element.click()  # clicks current box
             print("Clicked box:", str(current_box_key))
 
-            # obtain box status and updates in main dictionary
-            current_box_element = dict_of_boxes[current_box_key][1]  # sets current box element
+            try:
+                # Switch the control to the Alert window
+                obj = driver.switch_to.alert
+
+                time.sleep(100)
+
+                # Enter text into the Alert using send_keys()
+                obj.send_keys('CasTan')
+            except:
+                pass
+
+            current_box_element = dict_of_boxes[current_box_key][1]  # sets current box element to corner
             current_box_status = current_box_element.get_attribute("class")  # obtains box status
             dict_of_boxes[current_box_key][0] = current_box_status  # updates box status in box dictionary
             print("Box:", str(current_box_key), "Status:", dict_of_boxes[current_box_key][0])
@@ -126,7 +109,7 @@ for games in range(1, games_to_play + 1):
             print("Deleted box:", current_box_key)
 
             # prints count of values remaining in safe dict and prints entire safe dict
-            print("Values remaining in safe dict:", len(safe_dict_of_boxes))
+            # print("Values remaining in safe dict:", len(safe_dict_of_boxes))
             # print("Safe dict of boxes:", safe_dict_of_boxes)
 
             # ***START LOGIC TO OBTAIN STATUSES OF SURROUNDING BOXES***
@@ -159,7 +142,7 @@ for games in range(1, games_to_play + 1):
                         print("Values remaining in safe dict:", len(safe_dict_of_boxes))
                     except:
                         pass
-            print("Surrounding box dict:", surrounding_box_dict)
+            # print("Surrounding box dict:", surrounding_box_dict)
             # print("Dict of boxes:", dict_of_boxes)
 
             # ***END LOGIC TO OBTAIN STATUSES OF SURROUNDING BOXES***
@@ -170,9 +153,10 @@ for games in range(1, games_to_play + 1):
             current_box_mine_neighbors = None
             try:
                 current_box_mine_neighbors = int(current_box_status[-1])  # pulls last character of box status
-                print("Current box:", str(current_box_key), "Mine neighbors:", str(current_box_mine_neighbors))
+                # print("Current box:", str(current_box_key), "Mine neighbors:", str(current_box_mine_neighbors))
             except:
-                print("Current box:", str(current_box_key), "has 0 mine neighbors or is bombdeath")
+                pass
+                # print("Current box:", str(current_box_key), "has 0 mine neighbors or is bombdeath")
 
             # AMN FLAG logic: proceed if current box has known mine neighbors
             if current_box_mine_neighbors != 0 and current_box_mine_neighbors != None:
@@ -180,39 +164,40 @@ for games in range(1, games_to_play + 1):
                 # count number of occurrences of box status for each surrounding boxes
                 for key in surrounding_box_dict:
                     surrounding_box_status_counter = Counter(surrounding_box_dict.values())
-                print("Surrounding box status counter:", surrounding_box_status_counter)
+                # print("Surrounding box status counter:", surrounding_box_status_counter)
 
                 # if current box mine neighbors == count of blank surrounding squares then flag those squares
                 if current_box_mine_neighbors == surrounding_box_status_counter["square blank"]:
-                    print("Mine neighbors match blank surrounding squares.  Initiating flag sequence.")
+                    # print("Mine neighbors match blank surrounding squares.  Initiating flag sequence.")
 
                     # prints neighbor key statuses.  If blank then bomb flag in main dict and delete from safe dict
                     for key in surrounding_box_dict:
 
                         # print neighbor key status
-                        print("Neighbor key:", key, ", Neighbor value:", dict_of_boxes[key][0])
+                        # print("Neighbor key:", key, ", Neighbor value:", dict_of_boxes[key][0])
 
                         # if neighbor status is square blank then flag in main dict and delete from safe dict
                         if dict_of_boxes[key][0] == "square blank":
 
                             # flag neighbor status in main dict with bomb flag
                             dict_of_boxes[key][0] = "square bombflagged"  # flag neighbor in main dict
-                            print("Key:", key, "with status of", dict_of_boxes[key][0],
-                                      "is flagged in main dict")
+                            # print("Key:", key, "with status of", dict_of_boxes[key][0],
+                            #           "is flagged in main dict")
 
                             # delete neighbor from safe dict
                             try:
                                 del safe_dict_of_boxes[key]  # deletes neighbor from safe dictionary
                                 print("Key:", key, "with status of", dict_of_boxes[key][0],
                                       "is deleted from safe dict")
-                                print("Values remaining in safe dict:", len(safe_dict_of_boxes))
+                                # print("Values remaining in safe dict:", len(safe_dict_of_boxes))
 
                             except:
-                                print("Key:", key, "with status of", dict_of_boxes[key][0],
-                                      "is NOT deleted from safe dict")
+                                pass
+                                # print("Key:", key, "with status of", dict_of_boxes[key][0],
+                                #       "is NOT deleted from safe dict")
 
-                print("Values remaining in safe dict:", len(safe_dict_of_boxes))
-                print("Safe box dict:", safe_dict_of_boxes)
+                # print("Values remaining in safe dict:", len(safe_dict_of_boxes))
+                # print("Safe box dict:", safe_dict_of_boxes)
 
             # ***END OF GUESS LOOP ITERATION - check face value after click***
             face_element = driver.find_element_by_id("face")
