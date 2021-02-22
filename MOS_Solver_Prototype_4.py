@@ -87,6 +87,15 @@ for games in range(1, games_to_play + 1):
             current_box_element.click()  # clicks current box
             print("Clicked box:", str(current_box_key))
 
+            # check face value
+            face_element = driver.find_element_by_id("face")
+            face_status_value = face_element.get_attribute("class")
+            print("Face status:", face_status_value)
+
+            if face_status_value == "facewin":
+                print("Face value status:", face_status_value)
+                input("YOU HAVE WON! PROGRAM PAUSED!!!")
+
             # obtain box status and updates in main dictionary
             current_box_element = dict_of_boxes[current_box_key][1]  # sets current box element to corner
             current_box_status = current_box_element.get_attribute("class")  # obtains box status
@@ -100,10 +109,6 @@ for games in range(1, games_to_play + 1):
             # prints count of values remaining in safe dict and prints entire safe dict
             print("Values remaining in safe dict:", len(safe_dict_of_boxes))
             # print("Safe dict of boxes:", safe_dict_of_boxes)
-
-            # test to catch win
-            if len(safe_dict_of_boxes) == 10 and dict_of_boxes[current_box_key][0] != "square bombrevealed":
-                input("PROGRAM PAUSED!!! YOU WON!!!!")
 
             # ***START LOGIC TO OBTAIN STATUSES OF SURROUNDING BOXES***
 
@@ -184,9 +189,10 @@ for games in range(1, games_to_play + 1):
                                 print("Values remaining in safe dict:", len(safe_dict_of_boxes))
 
                             except:
-                                print("ERROR: Key:", key, "with status of", dict_of_boxes[key][0],
+                                print("Key:", key, "with status of", dict_of_boxes[key][0],
                                       "is NOT deleted from safe dict")
 
+                print("Values remaining in safe dict:", len(safe_dict_of_boxes))
                 print("Safe box dict:", safe_dict_of_boxes)
 
             # ***END OF GUESS LOOP ITERATION - check face value after click***
@@ -195,7 +201,7 @@ for games in range(1, games_to_play + 1):
 
             # restart guessing while loop
             if face_status_value == "facedead":
-                input("stop")
+                # input("stop")
                 print("Face value status:", face_status_value + ". Restarting game.")
                 face_element.click()
                 break
