@@ -42,7 +42,6 @@ for games in range(1, games_to_play + 1):
     for row in range(1, 10):
         for column in range(1, 10):
             safe_box_ID_coordinate = (int(row), int(column))
-            safe_dict_of_boxes[safe_box_ID_coordinate] = 0
     # print("starting safe dict:", safe_dict_of_boxes)
 
 
@@ -99,6 +98,10 @@ for games in range(1, games_to_play + 1):
             print("Clicked box:", str(current_box_key) + ". Status:", dict_of_boxes[current_box_key][0])
             print("Deleted box:", current_box_key)
             del safe_dict_of_boxes[current_box_key]  # deletes box key from safe dictionary
+
+            print(len(safe_dict_of_boxes))
+            if len(safe_dict_of_boxes) == 9 and dict_of_boxes[current_box_key][0] != "square bombrevealed":
+                input("PROGRAM PAUSED!!! YOU WON!!!!")
 
             # check status of boxes that surround current box and implement All-Free-Neighbors (AFN) logic
 
