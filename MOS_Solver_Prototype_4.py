@@ -92,6 +92,7 @@ for games in range(1, games_to_play + 1):
                 # Switch the control to the Alert window
                 obj = driver.switch_to.alert
 
+                # sleep timer
                 time.sleep(100)
 
                 # Enter text into the Alert using send_keys()
