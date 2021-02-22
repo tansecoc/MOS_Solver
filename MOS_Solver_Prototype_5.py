@@ -1,8 +1,6 @@
 from selenium import webdriver
-from selenium.webdriver import ActionChains
 from collections import Counter
 import random
-import time
 
 # opens minesweeper website
 PATH = "/Users/casimerotanseco/chromedriver/chromedriver"
@@ -38,7 +36,7 @@ for games in range(1, games_to_play + 1):
         for column in range(1, 10):
             safe_dict_of_boxes[(int(row), int(column))] = 0
 
-    # print("Values remaining in safe dict:", len(safe_dict_of_boxes))
+    print("Values remaining in safe dict:", len(safe_dict_of_boxes))
 
     # Coordinate offsets for AMN logic
     coordinate_offsets = [(-1, -1), (-1, 0), (-1, 1),
@@ -64,7 +62,7 @@ for games in range(1, games_to_play + 1):
         del safe_dict_of_boxes[current_box_key]
         print("Deleted box:", current_box_key)
 
-        # print("Values remaining in safe dict:", len(safe_dict_of_boxes))
+        print("Values remaining in safe dict:", len(safe_dict_of_boxes))
 
     # check face value
     face_element = driver.find_element_by_id("face")
@@ -82,24 +80,43 @@ for games in range(1, games_to_play + 1):
         # if game is not dead or won then continue guessing loop
         while face_status_value != "facedead":
 
+            # update current board status
+            for key in dict_of_boxes:
+                current_box_element = dict_of_boxes[current_box_key][1]  # sets current box element
+                current_box_status = current_box_element.get_attribute("class")  # obtains box status
+                dict_of_boxes[current_box_key][0] = current_box_status  # updates box status in box dictionary
+            print("Dict of boxes statuses:", dict_of_boxes)
+
+            # count current board status occurrences
+            dict_of_boxes_status_counter = Counter()
+            for key in dict_of_boxes:
+                dict_of_boxes_status_counter.update(dict_of_boxes[key])
+
+                # deletes key from safe dict if status is square open0
+                if dict_of_boxes[key][0] == "square open0":
+                    try:
+                        del safe_dict_of_boxes[key]
+                        print("Deleted box:", key)
+                    except:
+                        pass
+            print("Dict of boxes counter:", dict_of_boxes_status_counter)
+
+            # checks if count of square blanks == 11; if so, click one more box and pause game
+            if dict_of_boxes_status_counter["square blank"] == 11:
+                # click one last random box and pause
+                current_box_key = random.choice(list(safe_dict_of_boxes.keys()))  # pull random key from safe dict
+                current_box_element = dict_of_boxes[current_box_key][1]  # sets current box web-click element
+                current_box_element.click()  # clicks current box
+                input("YOU HAVE WON!!!")
+
             # click random box from safe dictionary
             current_box_key = random.choice(list(safe_dict_of_boxes.keys()))  # pull random key from safe dict
             current_box_element = dict_of_boxes[current_box_key][1]  # sets current box web-click element
             current_box_element.click()  # clicks current box
             print("Clicked box:", str(current_box_key))
 
-            try:
-                # Switch the control to the Alert window
-                obj = driver.switch_to.alert
-
-                time.sleep(100)
-
-                # Enter text into the Alert using send_keys()
-                obj.send_keys('CasTan')
-            except:
-                pass
-
-            current_box_element = dict_of_boxes[current_box_key][1]  # sets current box element to corner
+            # obtain box status and updates in main dictionary
+            current_box_element = dict_of_boxes[current_box_key][1]  # sets current box element
             current_box_status = current_box_element.get_attribute("class")  # obtains box status
             dict_of_boxes[current_box_key][0] = current_box_status  # updates box status in box dictionary
             print("Box:", str(current_box_key), "Status:", dict_of_boxes[current_box_key][0])
