@@ -95,7 +95,7 @@ for games in range(1, games_to_play + 1):
                 time.sleep(1)
 
                 # Enter text into the Alert using send_keys()
-                obj.send_keys("3/2 Lima")
+                obj.send_keys("casimero")
 
                 # Click Accept in alert box
                 obj.accept()
